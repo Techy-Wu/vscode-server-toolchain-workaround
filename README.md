@@ -75,11 +75,31 @@ If the command retures similar to belows, than you can enjoy your remote coding 
 ```bash
 [userxxx@hostxxx]$ ldd node
 	linux-vdso.so.1 =>  (0x00007ffe78b9d000)
-	libdl.so.2 => ***/vscode-server-toolchain-workaround/glibc-2.30/lib/libdl.so.2 (0x00007faf9b3eb000)
-	libstdc++.so.6 => ***/vscode-server-toolchain-workaround/gcc-10.3.0/lib64/libstdc++.so.6 (0x00007faf9b01c000)
-	libm.so.6 => ***/vscode-server-toolchain-workaround/glibc-2.30/lib/libm.so.6 (0x00007faf9acdd000)
-	libgcc_s.so.1 => ***/vscode-server-toolchain-workaround/gcc-10.3.0/lib64/libgcc_s.so.1 (0x00007faf9aac5000)
-	libpthread.so.0 => ***/vscode-server-toolchain-workaround/glibc-2.30/lib/libpthread.so.0 (0x00007faf9a8a4000)
-	libc.so.6 => ***/vscode-server-toolchain-workaround/glibc-2.30/lib/libc.so.6 (0x00007faf9a4e7000)
-	***/vscode-server-toolchain-workaround/glibc-2.30/lib/ld-linux-x86-64.so.2 => /lib64/ld-linux-x86-64.so.2 (0x000055b207558000)
+	libdl.so.2 => /path_to_this_repo/glibc-2.30/lib/libdl.so.2 (0x00007faf9b3eb000)
+	libstdc++.so.6 => /path_to_this_repo/gcc-10.3.0/lib64/libstdc++.so.6 (0x00007faf9b01c000)
+	libm.so.6 => /path_to_this_repo/glibc-2.30/lib/libm.so.6 (0x00007faf9acdd000)
+	libgcc_s.so.1 => /path_to_this_repo/gcc-10.3.0/lib64/libgcc_s.so.1 (0x00007faf9aac5000)
+	libpthread.so.0 => /path_to_this_repo/glibc-2.30/lib/libpthread.so.0 (0x00007faf9a8a4000)
+	libc.so.6 => /path_to_this_repo/glibc-2.30/lib/libc.so.6 (0x00007faf9a4e7000)
+	/path_to_this_repo/glibc-2.30/lib/ld-linux-x86-64.so.2 => /lib64/ld-linux-x86-64.so.2 (0x000055b207558000)
 ```
+
+#### 3.1 Fix symbolic links
+
+On some cases, the symbolic links would be missing and you probablely gets a return likes:
+
+```bash
+[userxxx@hostxxx]$ ldd node
+./node_t: error while loading shared libraries: /path_to_this_repo/glibc-2.30/lib/libdl.so.2: file too short
+```
+
+Charecterized as a `file too short` notice. In this case you need to run the fix program on two directories to fix the symbolic links:
+
+```bash
+cd /path_to_this_repo/glibc-2.30/lib
+bash /path_to_this_repo/fix.sh
+cd /path_to_this_repo/gcc-10.3.0/lib64
+bash /path_to_this_repo/fix.sh
+```
+
+After that you can re-execute the bash scripts of step 3 to apply the fixes.
