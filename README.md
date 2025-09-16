@@ -4,6 +4,8 @@ Starting with VS Code release 1.86, the minimum requirements for the build toolc
 
 This toolkit provides a workaround for whose setup does not meet these requirements and you are unable to upgrade the Linux distribution but still want to update VS Code. It ensembles glibc, libstdc++ and patchelf.
 
+Since the directory tree of vscode-server changed from a update, the original patch shell cannot be funcational anymore. However, the original repository is achcieved (https://github.com/npurson/vscode-server-toolchain-workaround), therefore this fork provides the up-to-date patch solution.
+
 ## Usage
 
 The following steps have to be executed each time VS Code is updated.
@@ -18,14 +20,16 @@ kernel >= 4.18, glibc >=2.28, libstdc++ >= 3.4.25 (gcc 8.1.0), Python 2.6 or 2.7
 
 ## References
 
-https://code.visualstudio.com/docs/remote/linux#_remote-host-container-wsl-linux-prerequisites
-https://code.visualstudio.com/docs/remote/faq#_can-i-run-vs-code-server-on-older-linux-distributions
+1. https://code.visualstudio.com/docs/remote/linux#_remote-host-container-wsl-linux-prerequisites
+2. https://code.visualstudio.com/docs/remote/faq#_can-i-run-vs-code-server-on-older-linux-distributions
+3. https://github.com/npurson/vscode-server-toolchain-workaround
+
 
 ## Workings
 
 ### 1. Bypassing the requirements check of VS Code
 
-The following excerpt is from `~/.vscode-server/bin/05047486b6df5eb8d44b2ecd70ea3bdf775fd937/bin/helpers/check-requirements.sh`:
+The following excerpt is from `~/.vscode-server/cli/servers/Stable-$COMMIT_ID/server/bin/helpers/check-requirements.sh`:
 
 ```bash
 if [ -f "/tmp/vscode-skip-server-requirements-check" ]; then
@@ -34,6 +38,8 @@ if [ -f "/tmp/vscode-skip-server-requirements-check" ]; then
         exit 0
 fi
 ```
+
+while the `$COMMIT_ID`  is a long string composed of numbers and letters, representing the version number of the program you installed. An example, `~/.vscode-server/cli/servers/Stable-f220831ea2d946c0dcb0f3eaa480eb435a2c1260/server/bin/helpers/check-requirements.sh` as a full address.
 
 Hence, creating the file `/tmp/vscode-skip-server-requirements-check` can skip the requirements check.
 
@@ -48,3 +54,32 @@ Note: The loading priority of the dynamic linker is as follows:
 3. RUNPATH within the ELF
 4. Cache in /etc/ld.so.cache
 5. /lib and /usr/lib
+
+### 3. Cheking if the server program can get valid dynamic linkers
+
+The server program is located at
+
+```bash
+~/.vscode-server/cli/servers/Stable-$COMMIT_ID/server/node
+```
+
+Use 'ldd' command to determine wheter the program is well-equiped with new dynamic linkers, as:
+
+```bash
+cd ~/.vscode-server/cli/servers/Stable-$COMMIT_ID/server
+lld node
+```
+
+If the command retures similar to belows, than you can enjoy your remote coding with vscode:
+
+```bash
+[userxxx@hostxxx]$ ldd node
+	linux-vdso.so.1 =>  (0x00007ffe78b9d000)
+	libdl.so.2 => ***/vscode-server-toolchain-workaround/glibc-2.30/lib/libdl.so.2 (0x00007faf9b3eb000)
+	libstdc++.so.6 => ***/vscode-server-toolchain-workaround/gcc-10.3.0/lib64/libstdc++.so.6 (0x00007faf9b01c000)
+	libm.so.6 => ***/vscode-server-toolchain-workaround/glibc-2.30/lib/libm.so.6 (0x00007faf9acdd000)
+	libgcc_s.so.1 => ***/vscode-server-toolchain-workaround/gcc-10.3.0/lib64/libgcc_s.so.1 (0x00007faf9aac5000)
+	libpthread.so.0 => ***/vscode-server-toolchain-workaround/glibc-2.30/lib/libpthread.so.0 (0x00007faf9a8a4000)
+	libc.so.6 => ***/vscode-server-toolchain-workaround/glibc-2.30/lib/libc.so.6 (0x00007faf9a4e7000)
+	***/vscode-server-toolchain-workaround/glibc-2.30/lib/ld-linux-x86-64.so.2 => /lib64/ld-linux-x86-64.so.2 (0x000055b207558000)
+```

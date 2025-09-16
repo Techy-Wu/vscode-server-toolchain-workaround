@@ -15,7 +15,7 @@ fi
 files="$@"
 
 if [[ -z "${file:-}" ]]; then
-  files=($HOME/.vscode-server/bin/*/node )
+  files=($HOME/.vscode-server/cli/servers/*/server/node )
 fi
 
 echo "${files[@]}"
