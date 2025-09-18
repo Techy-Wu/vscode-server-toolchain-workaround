@@ -12,7 +12,11 @@ The following steps have to be executed each time VS Code is updated.
 
 1. Update the VS Code on local.
 2. Connect to the remote server and await the download’s completion until the error regarding unsatisfied prerequisites is encountered.
-3. Execute the `run.sh` script.
+3. Execute the `run.sh` script and check.
+
+## Architecture suitability
+
+The releases after v0.1 is only suitable for systems with x86-64 architecture, those systems on other architectures please try codes archived as v0.1 release. 
 
 ## Prerequisites for VS Code
 
@@ -23,7 +27,6 @@ kernel >= 4.18, glibc >=2.28, libstdc++ >= 3.4.25 (gcc 8.1.0), Python 2.6 or 2.7
 1. https://code.visualstudio.com/docs/remote/linux#_remote-host-container-wsl-linux-prerequisites
 2. https://code.visualstudio.com/docs/remote/faq#_can-i-run-vs-code-server-on-older-linux-distributions
 3. https://github.com/npurson/vscode-server-toolchain-workaround
-
 
 ## Workings
 
@@ -63,7 +66,7 @@ The server program is located at
 ~/.vscode-server/cli/servers/Stable-$COMMIT_ID/server/node
 ```
 
-Use 'ldd' command to determine wheter the program is well-equiped with new dynamic linkers, as:
+Use `ldd` command to determine wheter the program is well-equiped with new dynamic linkers, as:
 
 ```bash
 cd ~/.vscode-server/cli/servers/Stable-$COMMIT_ID/server

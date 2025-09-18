@@ -19,7 +19,7 @@ if [[ -z "${file:-}" ]]; then
 fi
 
 echo "${files[@]}"
-patchelf="$script_dir/patchelf-0.9/bin/patchelf"
+patchelf="$script_dir/patchelf-0.18/bin/patchelf"
 interpreter="$script_dir/glibc-2.30/lib/ld-linux-x86-64.so.2"
 lib_dir="$script_dir/glibc-2.30/lib:$script_dir/gcc-10.3.0/lib64"
 
