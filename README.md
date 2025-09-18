@@ -67,7 +67,7 @@ Use 'ldd' command to determine wheter the program is well-equiped with new dynam
 
 ```bash
 cd ~/.vscode-server/cli/servers/Stable-$COMMIT_ID/server
-lld node
+ldd node
 ```
 
 If the command retures similar to belows, than you can enjoy your remote coding with vscode:
